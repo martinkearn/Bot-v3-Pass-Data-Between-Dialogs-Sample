@@ -17,7 +17,7 @@ namespace BotDataBetweenDialogs.Dialogs
 
         public virtual async Task MessageReceivedAsync(IDialogContext context, IAwaitable<object> result)
         {
-            //We'll call SearchQueryDialog regardless of what the user says
+            //We'll call Dialog1 regardless of what the user says
             //More typically this function would be a LUIS intent handler
             context.Call(new Dialog1(), ResumeAfterSearchQueryDialog);
         }

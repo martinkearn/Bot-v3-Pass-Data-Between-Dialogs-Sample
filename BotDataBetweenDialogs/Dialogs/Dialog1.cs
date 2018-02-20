@@ -16,8 +16,8 @@ namespace BotDataBetweenDialogs.Dialogs
     {
         public async Task StartAsync(IDialogContext context)
         {
-            //Use FormFlow to get details of the Person object
-            var personDialog = FormDialog.FromType<Person>();
+            //Use FormFlow to get details of the Person object. This sampel is not about FormFlow but it is the simplest way to create a complex type with data from the user
+            var personDialog = FormDialog.FromType<Person>(FormOptions.PromptInStart);
             context.Call(personDialog, ResumeAfterPersonFormDialog);
         }
 
@@ -25,18 +25,17 @@ namespace BotDataBetweenDialogs.Dialogs
         {
             //Grab the Person from FormFlow
             var person = await result;
-            var name = person.Name;
 
             //store the Person in bot state
             context.ConversationData.SetValue("person", person);
 
-            //Forward the context to the Dialog2 and pass in the Name and Person. Process the result from Dialog2 in ResumeAfterDialog2
-            await context.Forward(new Dialog2(name, person), this.ResumeAfterDialog2, person, CancellationToken.None);
+            //Forward the context to the Dialog2 and pass in the Person. Process the result from Dialog2 in ResumeAfterDialog2
+            await context.Forward(new Dialog2(person), this.ResumeAfterDialog2, person, CancellationToken.None);
         }
 
         private async Task ResumeAfterDialog2(IDialogContext context, IAwaitable<object> result)
         {
-            //Grab the resut sentback from SearchResultsDialog when is was closed with context.Done
+            //Grab the resut sentback from Dialog2 when is was closed with context.Done
             var message = await result as Activity;
             var messageText = message.Text;
 

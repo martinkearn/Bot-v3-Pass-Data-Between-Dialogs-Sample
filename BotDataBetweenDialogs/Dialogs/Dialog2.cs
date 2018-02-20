@@ -12,32 +12,29 @@ namespace BotDataBetweenDialogs.Dialogs
     [Serializable]
     public class Dialog2 : IDialog<object>
     {
-        private readonly string _name;
-        private Person _personConstructor;
-        private Person _personBotState;
+        private Person _personFromConstructor;
+        private Person _personFromBotState;
 
-        public Dialog2(string name, Person person)
+        public Dialog2(Person person)
         {
             //Grab the data sent with the constructor and store it in a private variable for use throughout the dialog
-            _name = name;
-            _personConstructor = person;
+            _personFromConstructor = person;
         }
 
         public async Task StartAsync(IDialogContext context)
         {
             //Grab the person object from bot state and store it in a private variable for use throughout the dialog
-            context.ConversationData.TryGetValue("person", out _personBotState);
+            context.ConversationData.TryGetValue("person", out _personFromBotState);
 
             context.Wait(this.MessageReceivedAsync);
         }
 
         public virtual async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
-            await context.PostAsync($"The Name passed via the dialog constructor is: {_name}");
-            await context.PostAsync($"The Person object passed via the dialog constructor is: {_personConstructor.Name}, {_personConstructor.Age}");
-            await context.PostAsync($"The Person object from bot state is: {_personBotState.Name}, {_personBotState.Age}");
+            await context.PostAsync($"The Person from the dialog constructor is: {_personFromConstructor.Name}, {_personFromConstructor.Age}");
+            await context.PostAsync($"The Person from bot state is: {_personFromBotState.Name}, {_personFromBotState.Age}");
 
-            await context.PostAsync($"What message would you like to send back?");
+            await context.PostAsync($"What message would you like to send back to Dialog1?");
 
             //await user's response and process it in ResponseReceivedAsync
             context.Wait(ResponseReceivedAsync);
