@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
@@ -8,24 +10,23 @@ namespace BotDataBetweenDialogs.Dialogs
     [Serializable]
     public class RootDialog : IDialog<object>
     {
-        public Task StartAsync(IDialogContext context)
+        public async Task StartAsync(IDialogContext context)
         {
-            context.Wait(MessageReceivedAsync);
-
-            return Task.CompletedTask;
+            context.Wait(this.MessageReceivedAsync);
         }
 
-        private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<object> result)
+        public virtual async Task MessageReceivedAsync(IDialogContext context, IAwaitable<object> result)
         {
-            var activity = await result as Activity;
-
-            // calculate something for us to return
-            int length = (activity.Text ?? string.Empty).Length;
-
-            // return our reply to the user
-            await context.PostAsync($"You sent {activity.Text} which was {length} characters");
-
-            context.Wait(MessageReceivedAsync);
+            //We'll call SearchQueryDialog regardless of what the user says
+            //More typically this function would be a LUIS intent handler
+            context.Call(new Dialog1(), ResumeAfterSearchQueryDialog);
         }
+
+        private async Task ResumeAfterSearchQueryDialog(IDialogContext context, IAwaitable<object> result)
+        {
+            //We'll just close the context and do nothing with the result. This will send the bot back to the starting point and a user will have to send a message to re-inituiate this dialog
+            context.Done("");
+        }
+
     }
 }
