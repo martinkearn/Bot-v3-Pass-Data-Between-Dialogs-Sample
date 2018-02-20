@@ -36,7 +36,7 @@ namespace BotDataBetweenDialogs.Dialogs
 
             await context.PostAsync($"What message would you like to send back to Dialog1?");
 
-            //await user's response and process it in ResponseReceivedAsync
+            //Await user's response and process it in ResponseReceivedAsync
             context.Wait(ResponseReceivedAsync);
         }
 
